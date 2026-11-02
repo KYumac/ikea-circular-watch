@@ -1,0 +1,53 @@
+name: IKEA circular check
+
+on:
+  schedule:
+    - cron: "40 23 * * *"   # 毎日 8:40（日本時間）
+    - cron: "40 11 * * *"   # 毎日 20:40（日本時間）
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: "取得した生データを保存する"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ikea-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check circular market
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          PAGE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+          DEBUG: ${{ inputs.debug && '1' || '0' }}
+        run: python check.py
+
+      - name: Upload debug data
+        if: ${{ always() && inputs.debug }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug
+          path: debug/
+          if-no-files-found: ignore
+
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state docs
+          git diff --cached --quiet || git commit -m "update $(TZ=Asia/Tokyo date '+%Y-%m-%d %H:%M')"
+          git push
