@@ -1,28 +1,57 @@
 {
-  "_説明": "欲しい商品と対象店舗。keywords のどれかが商品種別（説明の先頭、例：「ペンダントランプ」「ラグ パイル短」）に含まれれば該当し、exclude を含むものは除外。target を title にすると商品名（例：JÄTTEBO）で探す。max_price は上限価格（円、null なら上限なし）。stores は店舗名と IKEA の店舗ID（港北は IKEA 上の表記が「横浜」）",
+  "_説明": "欲しい商品と対象店舗。keywords のどれかが商品種別（説明の先頭、例：「ペンダントランプ」「ラグ パイル短」）に含まれれば該当し、exclude を含むものは除外。target を title にすると商品名（例：JÄTTEBO）で探す。max_price は上限価格（円、null なら上限なし）。stores は店舗名と IKEA の店舗ID（港北は IKEA 上の表記が「横浜」）。各商品の stores を指定すると、その店舗だけで探す（未指定なら全店舗）",
   "stores": {
     "Tokyo-Bay": "447",
     "新三郷": "887",
     "立川": "359",
-    "港北": "448"
+    "港北": "448",
+    "前橋": "697"
   },
   "items": [
     {
       "name": "照明",
-      "keywords": ["ランプ", "照明", "スポットライト", "LEDライト"],
-      "exclude": ["キャンドル", "ライトチェーン", "デコレーション"],
-      "max_price": null
+      "keywords": [
+        "ランプ",
+        "照明",
+        "スポットライト",
+        "LEDライト"
+      ],
+      "exclude": [
+        "キャンドル",
+        "ライトチェーン",
+        "デコレーション"
+      ],
+      "max_price": null,
+      "stores": [
+        "Tokyo-Bay",
+        "新三郷",
+        "立川",
+        "港北"
+      ]
     },
     {
       "name": "ラグ",
-      "keywords": ["ラグ", "カーペット"],
+      "keywords": [
+        "ラグ",
+        "カーペット"
+      ],
       "exclude": [],
-      "max_price": null
+      "max_price": null,
+      "stores": [
+        "Tokyo-Bay",
+        "新三郷",
+        "立川",
+        "港北"
+      ]
     },
     {
       "name": "JÄTTEBO ソファ",
       "target": "title",
-      "keywords": ["JÄTTEBO", "JATTEBO", "イェッテボ"],
+      "keywords": [
+        "JÄTTEBO",
+        "JATTEBO",
+        "イェッテボ"
+      ],
       "exclude": [],
       "max_price": null
     }
