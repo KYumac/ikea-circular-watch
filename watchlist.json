@@ -23,7 +23,7 @@
       "name": "JÄTTEBO ソファ",
       "target": "title",
       "keywords": ["JÄTTEBO", "JATTEBO", "イェッテボ"],
-      "exclude": ["カバー"],
+      "exclude": [],
       "max_price": null
     }
   ]
