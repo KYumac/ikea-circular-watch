@@ -81,7 +81,7 @@ def flatten(group, store):
                 "price": o.get("price"),
                 "orig": group.get("originalPrice"),
                 "image": group.get("heroImage") or "",
-                "url": PAGE,
+                "url": f"{PAGE}?stores={store['id']}#/item/{o.get('offerNumber')}",
                 "offer_no": o.get("offerNumber") or "",
             }
         )
