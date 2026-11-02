@@ -2,7 +2,7 @@ name: IKEA circular check
 
 on:
   schedule:
-    - cron: "40 5,11,17,23 * * *"   # 6時間おき：2:40／8:40／14:40／20:40（日本時間）
+    - cron: "0 3,9,15,21 * * *"   # 6時間おき：0:00／6:00／12:00／18:00（日本時間）
   workflow_dispatch:
     inputs:
       debug:
