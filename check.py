@@ -206,6 +206,8 @@ def main():
             for row in flatten(g, st):
                 current.add(row["key"])
                 for it in cfg["items"]:
+                    if it.get("stores") and w not in it["stores"]:
+                        continue  # この商品は対象外の店舗
                     if match(row, it):
                         row["category"] = it["name"]
                         hits[it["name"]].append(row)
