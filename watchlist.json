@@ -35,7 +35,9 @@
         "ラグ",
         "カーペット"
       ],
-      "exclude": [],
+      "exclude": [
+        "プラグ"
+      ],
       "max_price": null,
       "stores": [
         "Tokyo-Bay",
