@@ -1,8 +1,12 @@
 name: IKEA circular check
 
+# 0:00／6:00／12:00／18:00（日本時間）ごとに1回チェックする。
+# GitHubの定期実行は毎時0分ちょうどが混雑して大きく遅れるため、
+# 10分おきに起動し、その時間帯（0〜5時台／6〜11時台／12〜17時台／18〜23時台）で
+# まだチェックしていなければ実行、済んでいれば何もせず終了する。
 on:
   schedule:
-    - cron: "0 3,9,15,21 * * *"   # 6時間おき：0:00／6:00／12:00／18:00（日本時間）
+    - cron: "3,13,23,33,43,53 * * * *"
   workflow_dispatch:
     inputs:
       debug:
@@ -24,16 +28,33 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Decide whether to run
+        id: gate
+        run: |
+          slot="$(TZ=Asia/Tokyo date +%Y-%m-%d)-$(( $(TZ=Asia/Tokyo date +%-H) / 6 * 6 ))"
+          echo "slot=$slot" >> "$GITHUB_OUTPUT"
+          last="$(cat state/last_slot.txt 2>/dev/null || true)"
+          if [ "${{ github.event_name }}" != "schedule" ] || [ "$slot" != "$last" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "この時間帯（$slot）はチェック済み"
+          fi
+
       - uses: actions/setup-python@v5
+        if: steps.gate.outputs.run == 'true'
         with:
           python-version: "3.12"
 
       - name: Check circular market
+        if: steps.gate.outputs.run == 'true'
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           PAGE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
           DEBUG: ${{ inputs.debug && '1' || '0' }}
-        run: python check.py
+        run: |
+          python check.py
+          echo "${{ steps.gate.outputs.slot }}" > state/last_slot.txt
 
       - name: Upload debug data
         if: ${{ always() && inputs.debug }}
@@ -44,6 +65,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Commit results
+        if: steps.gate.outputs.run == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
